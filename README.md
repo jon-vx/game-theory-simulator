@@ -1,30 +1,28 @@
 # Game Theory Simulator
 
-A platform for simulating strategy tournaments across game-theory games, with a
-FastAPI backend, PostgreSQL persistence, and a Next.js dashboard. The first
-supported game is the round-robin Iterated Prisoner's Dilemma.
+Run Iterated Prisoner's Dilemma tournaments between 23 classic strategies and see which ones come out on top.
 
-Choose strategies, rounds per match, and matches per pairing. Setting matches per
-pairing to 5 runs every pair five times and combines their scores in the leaderboard.
+![Tournament leaderboard](docs/leaderboard.png)
 
-## Project layout
+Pick the strategies you want, set rounds per match and matches per pairing, and run a round-robin tournament. Every match is seeded, so the same settings always produce the same results. Tournaments are saved to PostgreSQL, so you can open old runs and look at any match round by round.
 
-- `backend/`: FastAPI API, simulation engine, database migrations, and tests.
-- `frontend/`: Next.js dashboard.
-- `compose.yaml`: local API and PostgreSQL services.
-- `legacy/`: local archive of the original Pygame application, tests, and logs.
-  This directory is Git-ignored and is not included in fresh clones. The original
-  files remain available in Git history.
+![Cumulative score for one match](docs/match.png)
 
-## Run
+## How it works
+
+- **Backend:** FastAPI and SQLAlchemy, with Alembic migrations. The simulation engine runs about 450K rounds per second, and each tournament is saved in a single transaction, so a failed save never leaves a half-written tournament behind.
+- **Frontend:** Next.js and TypeScript.
+- **Database:** PostgreSQL.
+- **Tests:** 111 pytest tests covering the strategies, scoring, the API, and the database. The 6 PostgreSQL tests are skipped unless `TEST_DATABASE_URL` is set.
+
+## Running it locally
 
 ```bash
-cp .env.example .env
-# Set POSTGRES_PASSWORD in .env.
+cp .env.example .env    # then set POSTGRES_PASSWORD
 docker compose up --build -d
 ```
 
-In another terminal:
+Then start the frontend in a second terminal:
 
 ```bash
 cd frontend
@@ -33,24 +31,20 @@ cp .env.example .env.local
 npm run dev
 ```
 
-- App: http://localhost:3000
-- API docs: http://localhost:8000/docs
-- Health: http://localhost:8000/api/v1/health
+The app runs at http://localhost:3000 and the API docs are at http://localhost:8000/docs.
 
 ## API
 
 All routes are under `/api/v1`.
 
-| Method | Route | Purpose |
+| Method | Route | What it does |
 | --- | --- | --- |
-| `GET` | `/health` | API/database status |
-| `GET` | `/strategies` | Available strategies |
+| `GET` | `/health` | API and database status |
+| `GET` | `/strategies` | List strategies |
 | `POST` | `/tournaments` | Run and save a tournament |
 | `GET` | `/tournaments` | List saved tournaments |
-| `GET` | `/tournaments/{id}` | Get a saved tournament |
-| `GET` | `/matches/{id}` | Get match rounds and scores |
-
-Example:
+| `GET` | `/tournaments/{id}` | Get one tournament |
+| `GET` | `/matches/{id}` | Get a match's rounds and scores |
 
 ```bash
 curl -X POST http://localhost:8000/api/v1/tournaments \
@@ -58,22 +52,22 @@ curl -X POST http://localhost:8000/api/v1/tournaments \
   -d '{"strategies":["tit_for_tat","always_defect"],"rounds":100,"seed":42}'
 ```
 
-## Checks
-
-Backend:
+## Tests
 
 ```bash
 python -m pip install -e './backend[test]'
 python -m pytest backend/tests
-```
 
-Frontend:
-
-```bash
 cd frontend
-npm run lint
-npm run typecheck
-npm run build
+npm run lint && npm run typecheck && npm run build
 ```
 
-PostgreSQL integration tests require `TEST_DATABASE_URL`; otherwise they are skipped.
+## CI/CD
+
+Jenkins runs the whole pipeline (see `Jenkinsfile`):
+
+1. Runs the backend tests and frontend checks inside Docker
+2. Builds the API and frontend images, tagged with the commit
+3. Pushes both images to Amazon ECR
+4. Waits for manual approval
+5. Deploys to an AWS EC2 instance over SSH. The deploy script backs up the database to S3, runs migrations, restarts the app, and checks that it's healthy.
