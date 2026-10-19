@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "game-theory-simulator-frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {

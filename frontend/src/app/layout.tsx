@@ -4,8 +4,8 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Prisoner’s Dilemma",
-  description: "Run and compare iterated Prisoner’s Dilemma tournaments.",
+  title: "Game Theory Simulator",
+  description: "Simulate and compare strategy tournaments across game-theory games.",
 };
 
 export default function RootLayout({
@@ -20,8 +20,8 @@ export default function RootLayout({
           Skip to content
         </a>
         <header className="app-header">
-          <Link href="/">Prisoner’s Dilemma</Link>
-          <span>Tournaments</span>
+          <Link href="/">Game Theory Simulator</Link>
+          <span>Prisoner’s Dilemma</span>
           <ThemeToggle />
         </header>
         {children}

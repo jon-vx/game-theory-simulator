@@ -1,7 +1,8 @@
-# Prisoner's Dilemma
+# Game Theory Simulator
 
-Round-robin Iterated Prisoner's Dilemma tournaments with a FastAPI backend,
-PostgreSQL persistence, and a Next.js dashboard.
+A platform for simulating strategy tournaments across game-theory games, with a
+FastAPI backend, PostgreSQL persistence, and a Next.js dashboard. The first
+supported game is the round-robin Iterated Prisoner's Dilemma.
 
 Choose strategies, rounds per match, and matches per pairing. Setting matches per
 pairing to 5 runs every pair five times and combines their scores in the leaderboard.

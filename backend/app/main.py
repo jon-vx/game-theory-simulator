@@ -34,7 +34,7 @@ def create_app(store: TournamentStore | None = None) -> FastAPI:
                 application.state.tournament_store.close()
 
     application = FastAPI(
-        title="Iterated Prisoner's Dilemma API",
+        title="Game Theory Simulator API",
         version="0.1.0",
         description="Configure and analyze reproducible strategy tournaments.",
         lifespan=lifespan,
