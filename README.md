@@ -13,7 +13,7 @@ Pick the strategies you want, set rounds per match and matches per pairing, and 
 - **Backend:** FastAPI and SQLAlchemy, with Alembic migrations. The simulation engine runs about 450K rounds per second, and each tournament is saved in a single transaction, so a failed save never leaves a half-written tournament behind.
 - **Frontend:** Next.js and TypeScript.
 - **Database:** PostgreSQL.
-- **Tests:** 111 pytest tests covering the strategies, scoring, the API, and the database. The 6 PostgreSQL tests are skipped unless `TEST_DATABASE_URL` is set.
+- **Tests:** 49 pytest tests covering the strategies, scoring, the API, and the database. The 3 PostgreSQL integration tests are skipped unless `TEST_DATABASE_URL` is set.
 
 ## Running it locally
 
